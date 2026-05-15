@@ -182,13 +182,18 @@ header {
   border-radius: 6px;
   padding: 8px 10px;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  flex-direction: column;
+  gap: 6px;
   cursor: pointer;
   transition: border-color 0.15s;
 }
 .session-item:hover { border-color: var(--accent); }
+.session-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
 .session-item-name {
   font-family: 'Rajdhani', sans-serif;
   font-size: 13px;
@@ -199,6 +204,42 @@ header {
 .session-item-alt {
   font-size: 10px;
   color: var(--text3);
+}
+.session-item-icons {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.session-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  border: 1.5px solid;
+  position: relative;
+  flex-shrink: 0;
+}
+.session-icon.ok { border-color: #1d4e3d; background: rgba(0,229,160,0.08); }
+.session-icon.bad { border-color: #5a1e22; background: rgba(255,77,106,0.08); }
+.session-icon.warn { border-color: #4a3800; background: rgba(255,194,58,0.08); }
+.session-icon.bad::after {
+  content: '';
+  position: absolute;
+  width: 130%;
+  height: 1.5px;
+  background: var(--accent2);
+  transform: rotate(-45deg);
+  border-radius: 2px;
+}
+.session-item-tip {
+  font-size: 11px;
+  color: var(--text3);
+  line-height: 1.4;
+  border-top: 1px solid var(--border);
+  padding-top: 5px;
 }
 .session-remove {
   background: none;
@@ -260,6 +301,32 @@ main {
   flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 2rem;
+}
+
+/* CARD IMAGE */
+.card-img {
+  width: 100%;
+  height: 140px;
+  overflow: hidden;
+  background: var(--bg3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid var(--border);
+}
+.card-img img {
+  height: 130px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.6));
+  transition: transform 0.2s;
+}
+.card:hover .card-img img { transform: scale(1.05); }
+.card-img-placeholder {
+  color: var(--text3);
+  font-size: 11px;
+  font-style: italic;
 }
 
 /* MONSTER CARD */
@@ -494,6 +561,7 @@ const MONSTERS = [
   /* ─────────── DANGER 1 ─────────── */
   {
     id: "peeper",
+    img: "Peeper",
     name: "Peeper",
     aliases: ["oeil", "oeuil", "eye", "plafond", "iris orange"],
     danger: 1,
@@ -511,6 +579,7 @@ const MONSTERS = [
   },
   {
     id: "shadow-child",
+    img: "Shadow_Child",
     name: "Shadow Child",
     aliases: ["enderman", "ombre", "grand mince", "bras multiples", "enfant", "visage enfant", "noir"],
     danger: 1,
@@ -528,6 +597,7 @@ const MONSTERS = [
   },
   {
     id: "gnome",
+    img: "Gnome",
     name: "Gnome",
     aliases: ["nain", "nain de jardin", "pioche", "petits", "groupe", "sourire"],
     danger: 1,
@@ -545,6 +615,7 @@ const MONSTERS = [
   },
   {
     id: "apex-predator",
+    img: "Apex_Predator",
     name: "Apex Predator",
     aliases: ["canard", "duck", "oiseau", "coin"],
     danger: 1,
@@ -562,6 +633,7 @@ const MONSTERS = [
   },
   {
     id: "spewer",
+    img: "Spewer",
     name: "Spewer",
     aliases: ["vomito", "alien", "vomi", "flagelles", "spermatozoide", "visage"],
     danger: 1,
@@ -579,6 +651,7 @@ const MONSTERS = [
   },
   {
     id: "bella",
+    img: "Bella",
     name: "Bella",
     aliases: ["tricycle", "velo", "rouge", "3 roues", "jouet"],
     danger: 1,
@@ -596,6 +669,7 @@ const MONSTERS = [
   },
   {
     id: "birthday-boy",
+    img: "Birthday_Boy",
     name: "Birthday Boy",
     aliases: ["gamin", "ballons", "anniversaire", "enfant ballons", "enfant", "gamin aux ballons"],
     danger: 1,
@@ -613,6 +687,7 @@ const MONSTERS = [
   },
   {
     id: "elsa",
+    img: "Elsa",
     name: "Elsa",
     aliases: ["chien", "chlebard", "clebs", "toutou", "animal domestique", "chebard"],
     danger: 1,
@@ -630,6 +705,7 @@ const MONSTERS = [
   },
   {
     id: "tick",
+    img: "Tick",
     name: "Tick",
     aliases: ["tique", "parasite", "insecte", "accroche", "se colle"],
     danger: 1,
@@ -649,6 +725,7 @@ const MONSTERS = [
   /* ─────────── DANGER 2 ─────────── */
   {
     id: "rugrat",
+    img: "Rugrat",
     name: "Rugrat",
     aliases: ["bebe", "bambin", "nourrisson", "petit", "rampe"],
     danger: 2,
@@ -666,6 +743,7 @@ const MONSTERS = [
   },
   {
     id: "animal",
+    img: "Animal",
     name: "Animal",
     aliases: ["araignee", "spider", "insecte", "pattes", "8 pattes", "arachnide"],
     danger: 2,
@@ -683,6 +761,7 @@ const MONSTERS = [
   },
   {
     id: "upscream",
+    img: "Upscream",
     name: "Upscream",
     aliases: ["hurleur", "crieur", "screamer", "cri", "bruit fort"],
     danger: 2,
@@ -700,6 +779,7 @@ const MONSTERS = [
   },
   {
     id: "chef",
+    img: "Chef",
     name: "Chef",
     aliases: ["crapaud", "grenouille", "grosse grenouille", "toad", "cuisinier"],
     danger: 2,
@@ -717,6 +797,7 @@ const MONSTERS = [
   },
   {
     id: "hidden",
+    img: "Hidden",
     name: "Hidden",
     aliases: ["invisible", "transparent", "fantome", "ghost", "on le voit pas"],
     danger: 2,
@@ -734,6 +815,7 @@ const MONSTERS = [
   },
   {
     id: "bowtie",
+    img: "Bowtie",
     name: "Bowtie",
     aliases: ["souffleur", "noeud papillon", "projette", "pousse", "vent"],
     danger: 2,
@@ -751,6 +833,7 @@ const MONSTERS = [
   },
   {
     id: "mentalist",
+    img: "Mentalist",
     name: "Mentalist",
     aliases: ["alien", "telekinese", "telepathie", "extra-terrestre", "psychique", "yeux"],
     danger: 2,
@@ -768,6 +851,7 @@ const MONSTERS = [
   },
   {
     id: "banger",
+    img: "Banger",
     name: "Banger",
     aliases: ["crane", "tete de mort", "skull", "plusieurs", "groupe crane", "squelette"],
     danger: 2,
@@ -785,6 +869,7 @@ const MONSTERS = [
   },
   {
     id: "gambit",
+    img: "Gambit",
     name: "Gambit",
     aliases: ["roue", "roulette", "cercle", "rond", "wheel", "tourne"],
     danger: 2,
@@ -802,6 +887,7 @@ const MONSTERS = [
   },
   {
     id: "headgrab",
+    img: "Headgrab",
     name: "Headgrab",
     aliases: ["charognard", "saisit la tete", "attrape", "voleur de tete", "saisit"],
     danger: 2,
@@ -819,6 +905,7 @@ const MONSTERS = [
   },
   {
     id: "heart-hugger",
+    img: "Heart_Hugger",
     name: "Heart Hugger",
     aliases: ["plante", "tentacule", "vegetation", "liane", "organique", "fleur"],
     danger: 2,
@@ -836,6 +923,7 @@ const MONSTERS = [
   },
   {
     id: "oogly",
+    img: "Oogly",
     name: "Oogly",
     aliases: ["mante", "mante religieuse", "insecte grand", "criquet", "mantis"],
     danger: 2,
@@ -855,6 +943,7 @@ const MONSTERS = [
   /* ─────────── DANGER 3 ─────────── */
   {
     id: "headman",
+    img: "Headman",
     name: "Headman",
     aliases: ["la tete", "tete volante", "crâne volant", "decapite"],
     danger: 3,
@@ -872,6 +961,7 @@ const MONSTERS = [
   },
   {
     id: "robe",
+    img: "Robe",
     name: "Robe",
     aliases: ["nonne", "bonne soeur", "robe noire", "religieuse", "fantome", "capuchon"],
     danger: 3,
@@ -889,6 +979,7 @@ const MONSTERS = [
   },
   {
     id: "huntsman",
+    img: "Huntsman",
     name: "Huntsman",
     aliases: ["chasseur", "hunter", "fusil", "humain", "vise", "tir"],
     danger: 3,
@@ -906,6 +997,7 @@ const MONSTERS = [
   },
   {
     id: "reaper",
+    img: "Reaper",
     name: "Reaper",
     aliases: ["epouvantail", "faux", "mort", "squelette faux", "faucheur", "scarecrow"],
     danger: 3,
@@ -923,6 +1015,7 @@ const MONSTERS = [
   },
   {
     id: "clown",
+    img: "Clown",
     name: "Clown",
     aliases: ["clown", "bouffon", "nez rouge", "costume clown", "agressif"],
     danger: 3,
@@ -940,6 +1033,7 @@ const MONSTERS = [
   },
   {
     id: "trudge",
+    img: "Trudge",
     name: "Trudge",
     aliases: ["armure", "chevalier", "metal", "lent", "blindé", "tank"],
     danger: 3,
@@ -957,6 +1051,7 @@ const MONSTERS = [
   },
   {
     id: "cleanup-crew",
+    img: "Cleanup_Crew",
     name: "Cleanup Crew",
     aliases: ["visages", "masques", "faces", "equipe", "groupe", "collectif", "plusieurs visages"],
     danger: 3,
@@ -974,6 +1069,7 @@ const MONSTERS = [
   },
   {
     id: "loom",
+    img: "Loom",
     name: "Loom",
     aliases: ["cauchemar", "nightmare", "grand", "tentacules longs", "boss", "enorme"],
     danger: 3,
@@ -1022,7 +1118,11 @@ function dangerLabel(d) {
 
 function renderCard(m) {
   const iconsHtml = m.icons.map(renderIcon).join("");
+  const imgHtml = m.img
+    ? `<div class="card-img"><img src="img/${m.img}.webp" alt="${m.name}" loading="lazy" onerror="this.parentElement.innerHTML='<span class=card-img-placeholder>image manquante</span>'"></div>`
+    : "";
   return `<div class="card" id="card-${m.id}" data-id="${m.id}" data-danger="${m.danger}" data-search="${(m.name+" "+m.aliases.join(" ")).toLowerCase()}">
+    ${imgHtml}
     <div class="card-header">
       <div>
         <div class="card-name">${m.name}</div>
@@ -1117,12 +1217,20 @@ function refreshSessionButtons() {
     card.classList.toggle("in-session", inSession);
   });
 }
+function stripTags(html) {
+  return html.replace(/<[^>]*>/g, "");
+}
+function shortTip(tip) {
+  const plain = stripTags(tip);
+  const words = plain.split(/\s+/).slice(0, 8).join(" ");
+  return words + (plain.split(/\s+/).length > 8 ? "…" : "");
+}
 function renderSessionList() {
   const list = document.getElementById("sessionList");
   const empty = document.getElementById("sessionEmpty");
   if (sessionIds.length === 0) {
-    empty.style.display = "";
     list.innerHTML = "";
+    empty.style.display = "";
     list.appendChild(empty);
     return;
   }
@@ -1131,17 +1239,28 @@ function renderSessionList() {
   sessionIds.forEach(id => {
     const m = MONSTERS.find(x => x.id === id);
     if (!m) return;
+    const iconsHtml = m.icons.map(ic =>
+      `<div class="session-icon ${ic.state}" title="${ic.label}"><span style="font-size:11px;line-height:1;">${ICON_EMOJIS[ic.type]||""}</span></div>`
+    ).join("");
     const item = document.createElement("div");
     item.className = "session-item";
-    item.innerHTML = `<div>
-      <div class="session-item-name">${m.name}</div>
-      <div class="session-item-alt">${m.aliases[0]||""}</div>
-    </div>
-    <button class="session-remove" onclick="toggleSession('${m.id}')" title="Retirer">×</button>`;
-    item.addEventListener("click", (e) => {
-      if (e.target.classList.contains("session-remove")) return;
+    item.innerHTML = `
+      <div class="session-item-top">
+        <div>
+          <div class="session-item-name">${m.name}</div>
+          <div class="session-item-alt">${m.aliases[0]||""}</div>
+        </div>
+        <button class="session-remove" data-remove="${m.id}" title="Retirer">×</button>
+      </div>
+      <div class="session-item-icons">${iconsHtml}</div>
+      <div class="session-item-tip">${shortTip(m.tip)}</div>`;
+    item.querySelector("[data-remove]").addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleSession(m.id);
+    });
+    item.addEventListener("click", () => {
       const card = document.getElementById("card-"+id);
-      if (card) { card.scrollIntoView({behavior:"smooth", block:"center"}); }
+      if (card) card.scrollIntoView({behavior:"smooth", block:"center"});
     });
     list.appendChild(item);
   });
