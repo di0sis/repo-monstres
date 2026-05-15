@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R.E.P.O. — Guide des Monstres</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0c10;
+  --bg2: #10141c;
+  --bg3: #161b26;
+  --border: #2a3040;
+  --accent: #00e5a0;
+  --accent2: #ff4d6a;
+  --accent3: #ffc23a;
+  --text: #e2e8f0;
+  --text2: #8896a8;
+  --text3: #4a5568;
+  --danger1: #2a3a28;
+  --danger2: #3a3020;
+  --danger3: #3a1e20;
+  --danger1t: #4caf50;
+  --danger2t: #ffa726;
+  --danger3t: #ef5350;
+  --card-w: 340px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* HEADER */
+header {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 1.1rem;
+  color: var(--accent);
+  letter-spacing: 2px;
+  flex-shrink: 0;
+}
+.logo span { color: var(--text2); }
+.search-wrap {
+  flex: 1;
+  min-width: 180px;
+  max-width: 380px;
+  position: relative;
+}
+.search-wrap svg {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text3);
+  pointer-events: none;
+}
+#search {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  padding: 7px 10px 7px 34px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+#search:focus { border-color: var(--accent); }
+#search::placeholder { color: var(--text3); }
+
+.filter-btns {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.filter-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text2);
+  font-size: 11px;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  letter-spacing: 1px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.filter-btn:hover { border-color: var(--text2); color: var(--text); }
+.filter-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(0,229,160,0.08); }
+.filter-btn.d1.active { border-color: var(--danger1t); color: var(--danger1t); background: rgba(76,175,80,0.08); }
+.filter-btn.d2.active { border-color: var(--danger2t); color: var(--danger2t); background: rgba(255,167,38,0.08); }
+.filter-btn.d3.active { border-color: var(--danger3t); color: var(--danger3t); background: rgba(239,83,80,0.08); }
+
+.session-toggle {
+  background: rgba(255,77,106,0.1);
+  border: 1px solid var(--accent2);
+  border-radius: 4px;
+  color: var(--accent2);
+  font-size: 11px;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.session-toggle:hover { background: rgba(255,77,106,0.2); }
+
+/* LAYOUT */
+.layout {
+  display: flex;
+  flex: 1;
+  gap: 0;
+}
+
+/* SIDEBAR SESSION */
+.sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 57px;
+  height: calc(100vh - 57px);
+  overflow: hidden;
+  transition: width 0.25s ease, opacity 0.25s ease;
+}
+.sidebar.collapsed {
+  width: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.sidebar-inner { padding: 1rem; display: flex; flex-direction: column; gap: 10px; height: 100%; min-width: 260px; }
+.sidebar h2 {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--text3);
+  text-transform: uppercase;
+}
+.session-empty {
+  color: var(--text3);
+  font-size: 12px;
+  font-style: italic;
+  padding: 8px 0;
+}
+.session-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.session-item {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.session-item:hover { border-color: var(--accent); }
+.session-item-name {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  flex: 1;
+}
+.session-item-alt {
+  font-size: 10px;
+  color: var(--text3);
+}
+.session-remove {
+  background: none;
+  border: none;
+  color: var(--text3);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 2px;
+  border-radius: 3px;
+  transition: color 0.15s;
+}
+.session-remove:hover { color: var(--accent2); }
+.reset-btn {
+  background: rgba(255,77,106,0.1);
+  border: 1px solid rgba(255,77,106,0.4);
+  border-radius: 5px;
+  color: var(--accent2);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  padding: 7px;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.15s;
+}
+.reset-btn:hover { background: rgba(255,77,106,0.2); }
+
+/* MAIN */
+main {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+.section-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-title.d1 { color: var(--danger1t); }
+.section-title.d2 { color: var(--danger2t); }
+.section-title.d3 { color: var(--danger3t); }
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.cards-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 2rem;
+}
+
+/* MONSTER CARD */
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: var(--card-w);
+  min-width: 260px;
+  max-width: 100%;
+  transition: border-color 0.2s, transform 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+.card:hover { border-color: #3d4a5c; }
+.card.in-session { border-color: var(--accent); }
+.card-header {
+  padding: 12px 14px 8px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+.card-name {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.1;
+}
+.card-alias {
+  font-size: 11px;
+  color: var(--text3);
+  font-style: italic;
+  margin-top: 1px;
+}
+.card-danger {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 3px 7px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.card-danger.d1 { background: var(--danger1); color: var(--danger1t); border: 1px solid rgba(76,175,80,0.3); }
+.card-danger.d2 { background: var(--danger2); color: var(--danger2t); border: 1px solid rgba(255,167,38,0.3); }
+.card-danger.d3 { background: var(--danger3); color: var(--danger3t); border: 1px solid rgba(239,83,80,0.3); }
+
+.card-stats {
+  padding: 0 14px 8px;
+  display: flex;
+  gap: 12px;
+}
+.stat {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--text3);
+}
+.stat span { color: var(--text2); }
+
+/* ICONS GRID */
+.card-icons {
+  padding: 8px 14px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  background: var(--bg3);
+}
+.icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-width: 44px;
+}
+.icon-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  position: relative;
+  border: 2px solid;
+  transition: transform 0.15s;
+}
+.icon-circle.ok {
+  border-color: #1d4e3d;
+  background: rgba(0,229,160,0.08);
+}
+.icon-circle.bad {
+  border-color: #5a1e22;
+  background: rgba(255,77,106,0.08);
+}
+.icon-circle.warn {
+  border-color: #4a3800;
+  background: rgba(255,194,58,0.08);
+}
+.icon-circle.bad::after {
+  content: '';
+  position: absolute;
+  width: 130%;
+  height: 2px;
+  background: var(--accent2);
+  transform: rotate(-45deg);
+  border-radius: 2px;
+}
+.icon-label {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text3);
+  text-align: center;
+  line-height: 1.1;
+}
+.icon-circle.ok .icon-label { color: var(--accent); }
+.icon-circle.bad .icon-label { color: var(--accent2); }
+
+/* vision badge */
+.vision-badge {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  line-height: 1;
+}
+
+/* CARD BODY */
+.card-body {
+  padding: 10px 14px 12px;
+}
+.card-tip {
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.6;
+}
+.card-tip strong {
+  color: var(--accent3);
+  font-weight: 500;
+}
+
+/* ADD TO SESSION */
+.card-footer {
+  padding: 0 14px 12px;
+}
+.add-session-btn {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--text3);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  padding: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.add-session-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,229,160,0.05); }
+.add-session-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(0,229,160,0.1); }
+.add-session-btn.active:hover { border-color: var(--accent2); color: var(--accent2); background: rgba(255,77,106,0.1); }
+
+.no-results {
+  color: var(--text3);
+  font-size: 13px;
+  padding: 2rem 0;
+  font-style: italic;
+}
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">R.E.P.O.<span> // MONSTRES</span></div>
+  <div class="search-wrap">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="search" placeholder="Chercher un monstre ou surnom…" autocomplete="off">
+  </div>
+  <div class="filter-btns">
+    <button class="filter-btn active" data-filter="all">Tous</button>
+    <button class="filter-btn d1" data-filter="1">Danger 1</button>
+    <button class="filter-btn d2" data-filter="2">Danger 2</button>
+    <button class="filter-btn d3" data-filter="3">Danger 3</button>
+  </div>
+  <button class="session-toggle" id="sessionToggle">📋 Session</button>
+</header>
+
+<div class="layout">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-inner">
+      <h2>Monstres en cours</h2>
+      <div class="session-list" id="sessionList">
+        <div class="session-empty" id="sessionEmpty">Aucun monstre ajouté.<br>Clique sur "+ Session" sur une carte.</div>
+      </div>
+      <button class="reset-btn" id="resetBtn">⟳ Réinitialiser la session</button>
+    </div>
+  </aside>
+
+  <main id="main">
+    <div id="sections-container"></div>
+    <div class="no-results hidden" id="noResults">Aucun monstre trouvé pour cette recherche.</div>
+  </main>
+
+</div>
+
+<script>
+/* =====================================================================
+   BASE DE DONNÉES DES MONSTRES
+   ➜ Pour modifier un monstre : change les champs ci-dessous.
+   ➜ Pour ajouter un monstre : copie un bloc et change les valeurs.
+   ➜ aliases = noms alternatifs (surnom, description physique…)
+   ➜ icons : ok = vert (à faire), bad = rouge barré (à éviter), warn = jaune (attention)
+   ➜ icon types : "regard" | "cache" | "bruit" | "piece" | "vision" | "touchable"
+   ===================================================================== */
+const MONSTERS = [
+
+  /* ─────────── DANGER 1 ─────────── */
+  {
+    id: "peeper",
+    name: "Peeper",
+    aliases: ["oeil", "oeuil", "eye", "plafond", "iris orange"],
+    danger: 1,
+    hp: 30,
+    dmg: "2/sec",
+    icons: [
+      { type: "regard",    state: "bad",  label: "Regarder" },
+      { type: "cache",     state: "ok",   label: "S'abriter" },
+      { type: "bruit",     state: "ok",   label: "Bruit" },
+      { type: "piece",     state: "bad",  label: "Rester" },
+      { type: "vision",    state: "warn", label: "180°", badge: "~180°" },
+      { type: "touchable", state: "ok",   label: "Toucher" },
+    ],
+    tip: "Ne bouge <strong>jamais</strong>. Il apparaît au plafond et verrouille ta caméra sur lui. <strong>Interpose un mur ou un gros objet</strong> (le chariot fonctionne). Dangereux si tu le croises en fuyant un autre monstre — il te bloque.",
+  },
+  {
+    id: "shadow-child",
+    name: "Shadow Child",
+    aliases: ["enderman", "ombre", "grand mince", "bras multiples", "enfant", "visage enfant", "noir"],
+    danger: 1,
+    hp: 150,
+    dmg: "30",
+    icons: [
+      { type: "regard",    state: "bad",  label: "Regarder" },
+      { type: "cache",     state: "ok",   label: "S'abriter" },
+      { type: "bruit",     state: "ok",   label: "Bruit" },
+      { type: "piece",     state: "ok",   label: "Rester" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "180°" },
+      { type: "touchable", state: "ok",   label: "Traverser" },
+    ],
+    tip: "<strong>Ne le regarde pas</strong>. Rire d'enfant = il est là. Tourne-lui le dos, tu peux même le traverser sans danger. Il disparaît tout seul après ~10 sec si personne le regarde.",
+  },
+  {
+    id: "gnome",
+    name: "Gnome",
+    aliases: ["nain", "nain de jardin", "pioche", "petits", "groupe", "sourire"],
+    danger: 1,
+    hp: 20,
+    dmg: "10",
+    icons: [
+      { type: "regard",    state: "ok",   label: "Regarder" },
+      { type: "cache",     state: "ok",   label: "S'abriter" },
+      { type: "bruit",     state: "ok",   label: "Bruit" },
+      { type: "piece",     state: "warn", label: "Objets!" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "180°" },
+      { type: "touchable", state: "ok",   label: "Tuer" },
+    ],
+    tip: "Apparaissent en <strong>groupe de 4</strong> (10 si ils remplacent un D3). Ciblent en priorité les <strong>objets de valeur</strong>. Pour les tuer vite : projette-les en l'air, ils meurent à l'impact. Ne lâchent pas d'orbe.",
+  },
+  {
+    id: "apex-predator",
+    name: "Apex Predator",
+    aliases: ["canard", "duck", "oiseau", "coin"],
+    danger: 1,
+    hp: 150,
+    dmg: "10/coup",
+    icons: [
+      { type: "regard",    state: "ok",   label: "Regarder" },
+      { type: "cache",     state: "bad",  label: "Cache" },
+      { type: "bruit",     state: "ok",   label: "Bruit" },
+      { type: "piece",     state: "ok",   label: "Pièce" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "360°" },
+      { type: "touchable", state: "bad",  label: "Toucher" },
+    ],
+    tip: "Il te suit partout en sautant. <strong>Ne le touche/frappe surtout pas</strong> → enragé 10 sec, il te pourchasse. Inutile de se cacher, il sait où tu es. Fuis jusqu'à ce qu'il se calme. <strong>Seau de la boutique</strong> = l'empêche de s'énerver si touché.",
+  },
+  {
+    id: "spewer",
+    name: "Spewer",
+    aliases: ["vomito", "alien", "vomi", "flagelles", "spermatozoide", "visage"],
+    danger: 1,
+    hp: 65,
+    dmg: "10",
+    icons: [
+      { type: "regard",    state: "ok",   label: "Regarder" },
+      { type: "cache",     state: "ok",   label: "Cache" },
+      { type: "bruit",     state: "ok",   label: "Bruit" },
+      { type: "piece",     state: "ok",   label: "Pièce" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "180°" },
+      { type: "touchable", state: "warn", label: "Fragile!" },
+    ],
+    tip: "Se colle à ton visage pour 10–60 sec. Peu dangereux si tu évites son vomi. <strong>Ne manipule aucun objet fragile</strong> tant qu'il est sur toi (tu pourrais vomir dessus). Si tu le fuis, il perd ta trace très vite.",
+  },
+  {
+    id: "bella",
+    name: "Bella",
+    aliases: ["tricycle", "velo", "rouge", "3 roues", "jouet"],
+    danger: 1,
+    hp: 100,
+    dmg: "20",
+    icons: [
+      { type: "regard",    state: "ok",   label: "Regarder" },
+      { type: "cache",     state: "ok",   label: "Cache" },
+      { type: "bruit",     state: "bad",  label: "Silence!" },
+      { type: "piece",     state: "ok",   label: "Pièce" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "360°" },
+      { type: "touchable", state: "ok",   label: "Toucher" },
+    ],
+    tip: "Il traque au <strong>son</strong>. Marche doucement à proximité. Si tu le croises, ne cours pas. Facile à assommer et à tuer.",
+  },
+  {
+    id: "birthday-boy",
+    name: "Birthday Boy",
+    aliases: ["gamin", "ballons", "anniversaire", "enfant ballons", "enfant", "gamin aux ballons"],
+    danger: 1,
+    hp: 80,
+    dmg: "25",
+    icons: [
+      { type: "regard",    state: "ok",   label: "Regarder" },
+      { type: "cache",     state: "ok",   label: "Cache" },
+      { type: "bruit",     state: "bad",  label: "Bruit!" },
+      { type: "piece",     state: "ok",   label: "Pièce" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "180°" },
+      { type: "touchable", state: "ok",   label: "Toucher" },
+    ],
+    tip: "Détecte au bruit. Si tu crèves un de ses ballons il devient agressif. <strong>Évite de courir</strong> à proximité. Assommable facilement.",
+  },
+  {
+    id: "elsa",
+    name: "Elsa",
+    aliases: ["chien", "chlebard", "clebs", "toutou", "animal domestique", "chebard"],
+    danger: 1,
+    hp: 90,
+    dmg: "15",
+    icons: [
+      { type: "regard",    state: "ok",   label: "Regarder" },
+      { type: "cache",     state: "ok",   label: "Cache" },
+      { type: "bruit",     state: "ok",   label: "Bruit" },
+      { type: "piece",     state: "ok",   label: "Pièce" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "180°" },
+      { type: "touchable", state: "ok",   label: "Toucher" },
+    ],
+    tip: "Chien agressif qui attaque à vue. Assommable, comme tous les monstres D1. Pas de particularité majeure — reste vigilant si tu portes un objet de valeur.",
+  },
+  {
+    id: "tick",
+    name: "Tick",
+    aliases: ["tique", "parasite", "insecte", "accroche", "se colle"],
+    danger: 1,
+    hp: 40,
+    dmg: "5/sec",
+    icons: [
+      { type: "regard",    state: "ok",   label: "Regarder" },
+      { type: "cache",     state: "ok",   label: "Cache" },
+      { type: "bruit",     state: "ok",   label: "Bruit" },
+      { type: "piece",     state: "ok",   label: "Pièce" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "180°" },
+      { type: "touchable", state: "warn", label: "Attention" },
+    ],
+    tip: "Se fixe au joueur et draine ses PV progressivement. Un coéquipier peut te l'arracher. Facile à assommer.",
+  },
+
+  /* ─────────── DANGER 2 ─────────── */
+  {
+    id: "rugrat",
+    name: "Rugrat",
+    aliases: ["bebe", "bambin", "nourrisson", "petit", "rampe"],
+    danger: 2,
+    hp: 100,
+    dmg: "20",
+    icons: [
+      { type: "regard",    state: "ok",   label: "Regarder" },
+      { type: "cache",     state: "ok",   label: "Cache" },
+      { type: "bruit",     state: "bad",  label: "Silence!" },
+      { type: "piece",     state: "bad",  label: "Partir" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "360°" },
+      { type: "touchable", state: "ok",   label: "Toucher" },
+    ],
+    tip: "Détecte les joueurs au bruit. <strong>Changer de pièce le perd</strong> facilement. Ne court pas, marche doucement. Peut appeler des renforts si agité.",
+  },
+  {
+    id: "animal",
+    name: "Animal",
+    aliases: ["araignee", "spider", "insecte", "pattes", "8 pattes", "arachnide"],
+    danger: 2,
+    hp: 120,
+    dmg: "25",
+    icons: [
+      { type: "regard",    state: "ok",   label: "Regarder" },
+      { type: "cache",     state: "bad",  label: "Cache" },
+      { type: "bruit",     state: "ok",   label: "Bruit" },
+      { type: "piece",     state: "bad",  label: "Partir" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "360°" },
+      { type: "touchable", state: "ok",   label: "Toucher" },
+    ],
+    tip: "Se cache dans les meubles et sous les lits — <strong>ne reste pas accroupi</strong> à portée. Attaque à vue. Changer de pièce = bonne stratégie. Assommable.",
+  },
+  {
+    id: "upscream",
+    name: "Upscream",
+    aliases: ["hurleur", "crieur", "screamer", "cri", "bruit fort"],
+    danger: 2,
+    hp: 80,
+    dmg: "40",
+    icons: [
+      { type: "regard",    state: "bad",  label: "Regarder" },
+      { type: "cache",     state: "ok",   label: "Cache" },
+      { type: "bruit",     state: "ok",   label: "Bruit" },
+      { type: "piece",     state: "ok",   label: "Pièce" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "180°" },
+      { type: "touchable", state: "ok",   label: "Toucher" },
+    ],
+    tip: "<strong>Ne le fixe pas dans les yeux</strong> — il hurle et inflige de gros dégâts à tous dans la pièce. Regarde ailleurs ou interpose quelque chose. Facile à tuer de côté.",
+  },
+  {
+    id: "chef",
+    name: "Chef",
+    aliases: ["crapaud", "grenouille", "grosse grenouille", "toad", "cuisinier"],
+    danger: 2,
+    hp: 150,
+    dmg: "30",
+    icons: [
+      { type: "regard",    state: "ok",   label: "Regarder" },
+      { type: "cache",     state: "ok",   label: "Cache" },
+      { type: "bruit",     state: "bad",  label: "Silence!" },
+      { type: "piece",     state: "ok",   label: "Pièce" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "180°" },
+      { type: "touchable", state: "ok",   label: "Toucher" },
+    ],
+    tip: "Traque au bruit. Sa langue allongée peut t'attraper à distance. <strong>Marche silencieusement</strong> à proximité. Assommable.",
+  },
+  {
+    id: "hidden",
+    name: "Hidden",
+    aliases: ["invisible", "transparent", "fantome", "ghost", "on le voit pas"],
+    danger: 2,
+    hp: 110,
+    dmg: "30",
+    icons: [
+      { type: "regard",    state: "ok",   label: "Regarder" },
+      { type: "cache",     state: "ok",   label: "Cache" },
+      { type: "bruit",     state: "ok",   label: "Bruit" },
+      { type: "piece",     state: "ok",   label: "Pièce" },
+      { type: "vision",    state: "bad",  label: "Invisible", badge: "???" },
+      { type: "touchable", state: "warn", label: "Diff." },
+    ],
+    tip: "Quasi <strong>invisible</strong>. Se révèle légèrement en mouvement — cherche une distorsion de l'air. Inflige de gros dégâts au contact. Reste sur tes gardes dans les couloirs.",
+  },
+  {
+    id: "bowtie",
+    name: "Bowtie",
+    aliases: ["souffleur", "noeud papillon", "projette", "pousse", "vent"],
+    danger: 2,
+    hp: 100,
+    dmg: "30",
+    icons: [
+      { type: "regard",    state: "ok",   label: "Regarder" },
+      { type: "cache",     state: "ok",   label: "Cache" },
+      { type: "bruit",     state: "ok",   label: "Bruit" },
+      { type: "piece",     state: "bad",  label: "Partir" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "180°" },
+      { type: "touchable", state: "ok",   label: "Toucher" },
+    ],
+    tip: "Projette les joueurs (et objets) avec une souffle puissant. <strong>Dangereux près des trous</strong> — tu peux mourir instantanément. Quitte la pièce si tu entends sa charge. Les niveaux avec des précipices le rendent très dangereux.",
+  },
+  {
+    id: "mentalist",
+    name: "Mentalist",
+    aliases: ["alien", "telekinese", "telepathie", "extra-terrestre", "psychique", "yeux"],
+    danger: 2,
+    hp: 130,
+    dmg: "25",
+    icons: [
+      { type: "regard",    state: "bad",  label: "Regarder" },
+      { type: "cache",     state: "ok",   label: "Cache" },
+      { type: "bruit",     state: "ok",   label: "Bruit" },
+      { type: "piece",     state: "ok",   label: "Pièce" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "180°" },
+      { type: "touchable", state: "ok",   label: "Toucher" },
+    ],
+    tip: "Te <strong>contrôle par télékinésie</strong> si tu le regardes — te déplace vers lui. Garde-le dans ton dos ou derrière un mur.",
+  },
+  {
+    id: "banger",
+    name: "Banger",
+    aliases: ["crane", "tete de mort", "skull", "plusieurs", "groupe crane", "squelette"],
+    danger: 2,
+    hp: 60,
+    dmg: "20",
+    icons: [
+      { type: "regard",    state: "ok",   label: "Regarder" },
+      { type: "cache",     state: "ok",   label: "Cache" },
+      { type: "bruit",     state: "bad",  label: "Bruit!" },
+      { type: "piece",     state: "ok",   label: "Pièce" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "360°" },
+      { type: "touchable", state: "ok",   label: "Toucher" },
+    ],
+    tip: "Crânes volants qui attaquent en groupe. Peu de PV individuellement mais <strong>dangereux en masse</strong>. Ils explosent au contact — reste à distance et assomme-les.",
+  },
+  {
+    id: "gambit",
+    name: "Gambit",
+    aliases: ["roue", "roulette", "cercle", "rond", "wheel", "tourne"],
+    danger: 2,
+    hp: 140,
+    dmg: "35",
+    icons: [
+      { type: "regard",    state: "ok",   label: "Regarder" },
+      { type: "cache",     state: "ok",   label: "Cache" },
+      { type: "bruit",     state: "ok",   label: "Bruit" },
+      { type: "piece",     state: "bad",  label: "Couloir!" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "180°" },
+      { type: "touchable", state: "ok",   label: "Toucher" },
+    ],
+    tip: "<strong>Roule à grande vitesse</strong> dans les couloirs et écrase tout. Évite de rester dans les passages étroits. Se coince dans les angles — utilise les tournants pour l'éviter.",
+  },
+  {
+    id: "headgrab",
+    name: "Headgrab",
+    aliases: ["charognard", "saisit la tete", "attrape", "voleur de tete", "saisit"],
+    danger: 2,
+    hp: 100,
+    dmg: "40",
+    icons: [
+      { type: "regard",    state: "ok",   label: "Regarder" },
+      { type: "cache",     state: "bad",  label: "Cache!" },
+      { type: "bruit",     state: "ok",   label: "Bruit" },
+      { type: "piece",     state: "ok",   label: "Pièce" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "180°" },
+      { type: "touchable", state: "ok",   label: "Toucher" },
+    ],
+    tip: "Se cache sous les meubles et <strong>t'attrape la tête</strong> si tu passes à portée ou te caches. <strong>Ne te cache pas sous un meuble</strong> s'il est dans la pièce ! Préfère changer de salle.",
+  },
+  {
+    id: "heart-hugger",
+    name: "Heart Hugger",
+    aliases: ["plante", "tentacule", "vegetation", "liane", "organique", "fleur"],
+    danger: 2,
+    hp: 90,
+    dmg: "15/sec",
+    icons: [
+      { type: "regard",    state: "ok",   label: "Regarder" },
+      { type: "cache",     state: "ok",   label: "Cache" },
+      { type: "bruit",     state: "ok",   label: "Bruit" },
+      { type: "piece",     state: "bad",  label: "Partir" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "360°" },
+      { type: "touchable", state: "warn", label: "Attention" },
+    ],
+    tip: "<strong>Enroule ses tentacules</strong> autour du joueur et draine des PV en continu. Un coéquipier peut t'arracher. <strong>Quitte la pièce</strong> dès que tu l'entends se déplacer.",
+  },
+  {
+    id: "oogly",
+    name: "Oogly",
+    aliases: ["mante", "mante religieuse", "insecte grand", "criquet", "mantis"],
+    danger: 2,
+    hp: 130,
+    dmg: "30",
+    icons: [
+      { type: "regard",    state: "ok",   label: "Regarder" },
+      { type: "cache",     state: "ok",   label: "Cache" },
+      { type: "bruit",     state: "ok",   label: "Bruit" },
+      { type: "piece",     state: "ok",   label: "Pièce" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "180°" },
+      { type: "touchable", state: "ok",   label: "Toucher" },
+    ],
+    tip: "Grande mante agressive. Attaque à vue, saute sur les joueurs. Assommable — lance-lui un objet lourd. Reste en mouvement pour l'éviter.",
+  },
+
+  /* ─────────── DANGER 3 ─────────── */
+  {
+    id: "headman",
+    name: "Headman",
+    aliases: ["la tete", "tete volante", "crâne volant", "decapite"],
+    danger: 3,
+    hp: 200,
+    dmg: "40",
+    icons: [
+      { type: "regard",    state: "ok",   label: "Regarder" },
+      { type: "cache",     state: "ok",   label: "Cache" },
+      { type: "bruit",     state: "ok",   label: "Bruit" },
+      { type: "piece",     state: "bad",  label: "Partir" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "360°" },
+      { type: "touchable", state: "warn", label: "Diff." },
+    ],
+    tip: "Tête décapitée volante très rapide. <strong>Changer de pièce</strong> est la meilleure option. Difficile à assommer. Dangereux en terrain ouvert.",
+  },
+  {
+    id: "robe",
+    name: "Robe",
+    aliases: ["nonne", "bonne soeur", "robe noire", "religieuse", "fantome", "capuchon"],
+    danger: 3,
+    hp: 250,
+    dmg: "45",
+    icons: [
+      { type: "regard",    state: "bad",  label: "Regarder" },
+      { type: "cache",     state: "ok",   label: "Cache" },
+      { type: "bruit",     state: "ok",   label: "Bruit" },
+      { type: "piece",     state: "ok",   label: "Pièce" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "180°" },
+      { type: "touchable", state: "ok",   label: "Toucher" },
+    ],
+    tip: "<strong>Ne la regarde JAMAIS directement</strong> — elle charge et inflige des dégâts massifs. Garde-la dans ton dos. Elle se déplace lentement si tu ne la vois pas.",
+  },
+  {
+    id: "huntsman",
+    name: "Huntsman",
+    aliases: ["chasseur", "hunter", "fusil", "humain", "vise", "tir"],
+    danger: 3,
+    hp: 180,
+    dmg: "50",
+    icons: [
+      { type: "regard",    state: "ok",   label: "Regarder" },
+      { type: "cache",     state: "ok",   label: "Cache!" },
+      { type: "bruit",     state: "ok",   label: "Bruit" },
+      { type: "piece",     state: "bad",  label: "Partir" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "180°" },
+      { type: "touchable", state: "ok",   label: "Toucher" },
+    ],
+    tip: "Traque et <strong>tire à distance</strong> sur les joueurs visibles. <strong>Cache-toi derrière des murs ou meubles</strong> absolument. Changer de pièce casse sa ligne de mire. Dangereux dans les grandes salles.",
+  },
+  {
+    id: "reaper",
+    name: "Reaper",
+    aliases: ["epouvantail", "faux", "mort", "squelette faux", "faucheur", "scarecrow"],
+    danger: 3,
+    hp: 220,
+    dmg: "55",
+    icons: [
+      { type: "regard",    state: "ok",   label: "Regarder" },
+      { type: "cache",     state: "ok",   label: "Cache" },
+      { type: "bruit",     state: "bad",  label: "Silence!" },
+      { type: "piece",     state: "bad",  label: "Fuir" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "360°" },
+      { type: "touchable", state: "ok",   label: "Toucher" },
+    ],
+    tip: "Détecte au son et a une <strong>portée d'attaque immense</strong> avec sa faux. <strong>Cours et changes de pièces</strong> — il est lent mais son attaque traverse les murs. Marche en silence à proximité.",
+  },
+  {
+    id: "clown",
+    name: "Clown",
+    aliases: ["clown", "bouffon", "nez rouge", "costume clown", "agressif"],
+    danger: 3,
+    hp: 200,
+    dmg: "50",
+    icons: [
+      { type: "regard",    state: "ok",   label: "Regarder" },
+      { type: "cache",     state: "ok",   label: "Cache" },
+      { type: "bruit",     state: "ok",   label: "Bruit" },
+      { type: "piece",     state: "bad",  label: "Fuir" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "360°" },
+      { type: "touchable", state: "warn", label: "Assomme" },
+    ],
+    tip: "Très agressif, attaque dès qu'il te voit. <strong>Fuis dans plusieurs pièces</strong> pour le semer. Peut être assommé avec un gros objet. Dangeureux si coincé dans un couloir.",
+  },
+  {
+    id: "trudge",
+    name: "Trudge",
+    aliases: ["armure", "chevalier", "metal", "lent", "blindé", "tank"],
+    danger: 3,
+    hp: 400,
+    dmg: "60",
+    icons: [
+      { type: "regard",    state: "ok",   label: "Regarder" },
+      { type: "cache",     state: "ok",   label: "Cache" },
+      { type: "bruit",     state: "ok",   label: "Bruit" },
+      { type: "piece",     state: "ok",   label: "Contourner" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "90°" },
+      { type: "touchable", state: "ok",   label: "Toucher" },
+    ],
+    tip: "Énorme armure avec beaucoup de PV et une <strong>vision limitée à ~90°</strong>. <strong>Passe derrière lui</strong> — il ne te verra pas. Lent mais les dégâts sont massifs au contact. Idéal à pousser dans un trou.",
+  },
+  {
+    id: "cleanup-crew",
+    name: "Cleanup Crew",
+    aliases: ["visages", "masques", "faces", "equipe", "groupe", "collectif", "plusieurs visages"],
+    danger: 3,
+    hp: 160,
+    dmg: "35",
+    icons: [
+      { type: "regard",    state: "ok",   label: "Regarder" },
+      { type: "cache",     state: "ok",   label: "Cache" },
+      { type: "bruit",     state: "bad",  label: "Silence!" },
+      { type: "piece",     state: "bad",  label: "Fuir" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "360°" },
+      { type: "touchable", state: "ok",   label: "Toucher" },
+    ],
+    tip: "Groupe de visages qui attaquent en meute. <strong>Ils communiquent</strong> — si l'un te voit, tous savent où tu es. Fuis dans plusieurs pièces en silence. Dangereux si encerclé.",
+  },
+  {
+    id: "loom",
+    name: "Loom",
+    aliases: ["cauchemar", "nightmare", "grand", "tentacules longs", "boss", "enorme"],
+    danger: 3,
+    hp: 350,
+    dmg: "60",
+    icons: [
+      { type: "regard",    state: "bad",  label: "Regarder" },
+      { type: "cache",     state: "ok",   label: "Cache!" },
+      { type: "bruit",     state: "bad",  label: "Silence!" },
+      { type: "piece",     state: "bad",  label: "Fuir vite" },
+      { type: "vision",    state: "warn", label: "Vision", badge: "360°" },
+      { type: "touchable", state: "warn", label: "Difficile" },
+    ],
+    tip: "<strong>Le monstre le plus dangereux du jeu.</strong> Réagit au regard ET au son. Cache-toi immédiatement, ne cours pas (bruit), ne le regarde pas. Ses tentacules traversent les obstacles. Fuis à travers plusieurs pièces si possible.",
+  },
+];
+
+/* =====================================================================
+   RENDU DES ICÔNES
+   ===================================================================== */
+const ICON_EMOJIS = {
+  regard:    "👁️",
+  cache:     "🫣",
+  bruit:     "🔊",
+  piece:     "🚪",
+  vision:    "🎯",
+  touchable: "✋",
+};
+
+function renderIcon(icon) {
+  const badge = icon.badge ? `<span class="vision-badge">${icon.badge}</span>` : "";
+  return `<div class="icon-item">
+    <div class="icon-circle ${icon.state}" title="${icon.label}">
+      <span style="font-size:16px;line-height:1;">${ICON_EMOJIS[icon.type]||"?"}</span>
+      ${badge}
+    </div>
+    <div class="icon-label">${icon.label}</div>
+  </div>`;
+}
+
+function dangerLabel(d) {
+  if (d===1) return "DANGER 1";
+  if (d===2) return "DANGER 2";
+  return "DANGER 3";
+}
+
+function renderCard(m) {
+  const iconsHtml = m.icons.map(renderIcon).join("");
+  return `<div class="card" id="card-${m.id}" data-id="${m.id}" data-danger="${m.danger}" data-search="${(m.name+" "+m.aliases.join(" ")).toLowerCase()}">
+    <div class="card-header">
+      <div>
+        <div class="card-name">${m.name}</div>
+        <div class="card-alias">${m.aliases.slice(0,3).join(" · ")}</div>
+      </div>
+      <div class="card-danger d${m.danger}">${dangerLabel(m.danger)}</div>
+    </div>
+    <div class="card-stats">
+      ${m.hp ? `<div class="stat">PV <span>${m.hp}</span></div>` : ""}
+      ${m.dmg ? `<div class="stat">DMG <span>${m.dmg}</span></div>` : ""}
+    </div>
+    <div class="card-icons">${iconsHtml}</div>
+    <div class="card-body">
+      <div class="card-tip">${m.tip}</div>
+    </div>
+    <div class="card-footer">
+      <button class="add-session-btn" data-id="${m.id}" onclick="toggleSession('${m.id}')">+ Ajouter à la session</button>
+    </div>
+  </div>`;
+}
+
+/* =====================================================================
+   INIT
+   ===================================================================== */
+let sessionIds = JSON.parse(localStorage.getItem("repo_session")||"[]");
+let activeFilter = "all";
+let sidebarOpen = true;
+
+function buildSections() {
+  const container = document.getElementById("sections-container");
+  const groups = {1:[],2:[],3:[]};
+  MONSTERS.forEach(m => groups[m.danger].push(m));
+  let html = "";
+  [1,2,3].forEach(d => {
+    if (!groups[d].length) return;
+    html += `<div class="section-title d${d}">${dangerLabel(d)} (${groups[d].length} monstres)</div>
+    <div class="cards-grid" id="grid-d${d}">${groups[d].map(renderCard).join("")}</div>`;
+  });
+  container.innerHTML = html;
+  refreshSessionButtons();
+}
+
+function applyFilters() {
+  const q = document.getElementById("search").value.trim().toLowerCase();
+  let anyVisible = false;
+  MONSTERS.forEach(m => {
+    const card = document.getElementById("card-"+m.id);
+    if (!card) return;
+    const matchFilter = activeFilter === "all" || String(m.danger) === activeFilter;
+    const matchSearch = !q || card.dataset.search.includes(q);
+    const show = matchFilter && matchSearch;
+    card.style.display = show ? "" : "none";
+    if (show) anyVisible = true;
+  });
+  // hide empty grids
+  [1,2,3].forEach(d => {
+    const grid = document.getElementById("grid-d"+d);
+    if (!grid) return;
+    const hasVisible = [...grid.children].some(c => c.style.display !== "none");
+    // section title is sibling — use display via prev element
+    const prevTitle = grid.previousElementSibling;
+    if (prevTitle) prevTitle.style.display = hasVisible ? "" : "none";
+    grid.style.display = hasVisible ? "" : "none";
+  });
+  document.getElementById("noResults").classList.toggle("hidden", anyVisible);
+}
+
+/* =====================================================================
+   SESSION
+   ===================================================================== */
+function saveSession() {
+  localStorage.setItem("repo_session", JSON.stringify(sessionIds));
+}
+function toggleSession(id) {
+  if (sessionIds.includes(id)) {
+    sessionIds = sessionIds.filter(x => x !== id);
+  } else {
+    sessionIds.push(id);
+  }
+  saveSession();
+  refreshSessionButtons();
+  renderSessionList();
+}
+function refreshSessionButtons() {
+  MONSTERS.forEach(m => {
+    const btn = document.querySelector(`.add-session-btn[data-id="${m.id}"]`);
+    const card = document.getElementById("card-"+m.id);
+    if (!btn || !card) return;
+    const inSession = sessionIds.includes(m.id);
+    btn.classList.toggle("active", inSession);
+    btn.textContent = inSession ? "✓ Dans la session (retirer)" : "+ Ajouter à la session";
+    card.classList.toggle("in-session", inSession);
+  });
+}
+function renderSessionList() {
+  const list = document.getElementById("sessionList");
+  const empty = document.getElementById("sessionEmpty");
+  if (sessionIds.length === 0) {
+    empty.style.display = "";
+    list.innerHTML = "";
+    list.appendChild(empty);
+    return;
+  }
+  empty.style.display = "none";
+  list.innerHTML = "";
+  sessionIds.forEach(id => {
+    const m = MONSTERS.find(x => x.id === id);
+    if (!m) return;
+    const item = document.createElement("div");
+    item.className = "session-item";
+    item.innerHTML = `<div>
+      <div class="session-item-name">${m.name}</div>
+      <div class="session-item-alt">${m.aliases[0]||""}</div>
+    </div>
+    <button class="session-remove" onclick="toggleSession('${m.id}')" title="Retirer">×</button>`;
+    item.addEventListener("click", (e) => {
+      if (e.target.classList.contains("session-remove")) return;
+      const card = document.getElementById("card-"+id);
+      if (card) { card.scrollIntoView({behavior:"smooth", block:"center"}); }
+    });
+    list.appendChild(item);
+  });
+}
+
+/* =====================================================================
+   EVENTS
+   ===================================================================== */
+document.getElementById("search").addEventListener("input", applyFilters);
+document.querySelectorAll(".filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    activeFilter = btn.dataset.filter;
+    applyFilters();
+  });
+});
+document.getElementById("sessionToggle").addEventListener("click", () => {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById("sidebar").classList.toggle("collapsed", !sidebarOpen);
+});
+document.getElementById("resetBtn").addEventListener("click", () => {
+  if (confirm("Réinitialiser la session ? Tous les monstres seront retirés.")) {
+    sessionIds = [];
+    saveSession();
+    refreshSessionButtons();
+    renderSessionList();
+  }
+});
+
+/* =====================================================================
+   BOOT
+   ===================================================================== */
+buildSections();
+renderSessionList();
+</script>
+</body>
+</html>
