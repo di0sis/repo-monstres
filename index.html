@@ -1139,7 +1139,7 @@ function renderCard(m) {
       <div class="card-tip">${m.tip}</div>
     </div>
     <div class="card-footer">
-      <button class="add-session-btn" data-id="${m.id}" onclick="toggleSession('${m.id}')">+ Ajouter à la session</button>
+      <button class="add-session-btn" data-id="${m.id}">+ Ajouter à la session</button>
     </div>
   </div>`;
 }
@@ -1196,6 +1196,53 @@ function applyFilters() {
 function saveSession() {
   localStorage.setItem("repo_session", JSON.stringify(sessionIds));
 }
+
+function updateAll() {
+  // 1. Mettre à jour chaque bouton + bordure de carte
+  MONSTERS.forEach(m => {
+    const btn = document.querySelector(`.add-session-btn[data-id="${m.id}"]`);
+    const card = document.getElementById("card-" + m.id);
+    const inSession = sessionIds.includes(m.id);
+    if (btn) {
+      btn.classList.toggle("active", inSession);
+      btn.textContent = inSession ? "✓ Dans la session (retirer)" : "+ Ajouter à la session";
+    }
+    if (card) card.classList.toggle("in-session", inSession);
+  });
+
+  // 2. Reconstruire la liste sidebar
+  const list = document.getElementById("sessionList");
+  const empty = document.getElementById("sessionEmpty");
+  list.innerHTML = "";
+  if (sessionIds.length === 0) {
+    empty.style.display = "";
+    list.appendChild(empty);
+    return;
+  }
+  empty.style.display = "none";
+  sessionIds.forEach(id => {
+    const m = MONSTERS.find(x => x.id === id);
+    if (!m) return;
+    const iconsHtml = m.icons.map(ic =>
+      `<div class="session-icon ${ic.state}" title="${ic.label}"><span style="font-size:11px;line-height:1;">${ICON_EMOJIS[ic.type] || ""}</span></div>`
+    ).join("");
+    const item = document.createElement("div");
+    item.className = "session-item";
+    item.dataset.id = m.id;
+    item.innerHTML = `
+      <div class="session-item-top">
+        <div>
+          <div class="session-item-name">${m.name}</div>
+          <div class="session-item-alt">${m.aliases[0] || ""}</div>
+        </div>
+        <button class="session-remove" data-remove="${m.id}" title="Retirer">×</button>
+      </div>
+      <div class="session-item-icons">${iconsHtml}</div>
+      <div class="session-item-tip">${shortTip(m.tip)}</div>`;
+    list.appendChild(item);
+  });
+}
+
 function toggleSession(id) {
   if (sessionIds.includes(id)) {
     sessionIds = sessionIds.filter(x => x !== id);
@@ -1203,20 +1250,9 @@ function toggleSession(id) {
     sessionIds.push(id);
   }
   saveSession();
-  refreshSessionButtons();
-  renderSessionList();
+  updateAll();
 }
-function refreshSessionButtons() {
-  MONSTERS.forEach(m => {
-    const btn = document.querySelector(`.add-session-btn[data-id="${m.id}"]`);
-    const card = document.getElementById("card-"+m.id);
-    if (!btn || !card) return;
-    const inSession = sessionIds.includes(m.id);
-    btn.classList.toggle("active", inSession);
-    btn.textContent = inSession ? "✓ Dans la session (retirer)" : "+ Ajouter à la session";
-    card.classList.toggle("in-session", inSession);
-  });
-}
+
 function stripTags(html) {
   return html.replace(/<[^>]*>/g, "");
 }
@@ -1225,50 +1261,31 @@ function shortTip(tip) {
   const words = plain.split(/\s+/).slice(0, 8).join(" ");
   return words + (plain.split(/\s+/).length > 8 ? "…" : "");
 }
-function renderSessionList() {
-  const list = document.getElementById("sessionList");
-  const empty = document.getElementById("sessionEmpty");
-  if (sessionIds.length === 0) {
-    list.innerHTML = "";
-    empty.style.display = "";
-    list.appendChild(empty);
-    return;
-  }
-  empty.style.display = "none";
-  list.innerHTML = "";
-  sessionIds.forEach(id => {
-    const m = MONSTERS.find(x => x.id === id);
-    if (!m) return;
-    const iconsHtml = m.icons.map(ic =>
-      `<div class="session-icon ${ic.state}" title="${ic.label}"><span style="font-size:11px;line-height:1;">${ICON_EMOJIS[ic.type]||""}</span></div>`
-    ).join("");
-    const item = document.createElement("div");
-    item.className = "session-item";
-    item.innerHTML = `
-      <div class="session-item-top">
-        <div>
-          <div class="session-item-name">${m.name}</div>
-          <div class="session-item-alt">${m.aliases[0]||""}</div>
-        </div>
-        <button class="session-remove" data-remove="${m.id}" title="Retirer">×</button>
-      </div>
-      <div class="session-item-icons">${iconsHtml}</div>
-      <div class="session-item-tip">${shortTip(m.tip)}</div>`;
-    item.querySelector("[data-remove]").addEventListener("click", (e) => {
-      e.stopPropagation();
-      toggleSession(m.id);
-    });
-    item.addEventListener("click", () => {
-      const card = document.getElementById("card-"+id);
-      if (card) card.scrollIntoView({behavior:"smooth", block:"center"});
-    });
-    list.appendChild(item);
-  });
-}
 
 /* =====================================================================
-   EVENTS
+   EVENTS — tout délégué sur des conteneurs stables
    ===================================================================== */
+// Boutons "ajouter/retirer" dans les cartes (délégué sur main)
+document.getElementById("main").addEventListener("click", e => {
+  const btn = e.target.closest(".add-session-btn");
+  if (btn) toggleSession(btn.dataset.id);
+});
+
+// Boutons "×" et clic sur item dans la sidebar (délégué sur sessionList)
+document.getElementById("sessionList").addEventListener("click", e => {
+  const removeBtn = e.target.closest("[data-remove]");
+  if (removeBtn) {
+    e.stopPropagation();
+    toggleSession(removeBtn.dataset.remove);
+    return;
+  }
+  const item = e.target.closest(".session-item");
+  if (item) {
+    const card = document.getElementById("card-" + item.dataset.id);
+    if (card) card.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+});
+
 document.getElementById("search").addEventListener("input", applyFilters);
 document.querySelectorAll(".filter-btn").forEach(btn => {
   btn.addEventListener("click", () => {
@@ -1286,8 +1303,7 @@ document.getElementById("resetBtn").addEventListener("click", () => {
   if (confirm("Réinitialiser la session ? Tous les monstres seront retirés.")) {
     sessionIds = [];
     saveSession();
-    refreshSessionButtons();
-    renderSessionList();
+    updateAll();
   }
 });
 
@@ -1295,7 +1311,7 @@ document.getElementById("resetBtn").addEventListener("click", () => {
    BOOT
    ===================================================================== */
 buildSections();
-renderSessionList();
+updateAll();
 </script>
 </body>
 </html>
