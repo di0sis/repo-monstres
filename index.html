@@ -112,7 +112,6 @@ header {
 .filter-btn.d2.active { border-color: var(--danger2t); color: var(--danger2t); background: rgba(255,167,38,0.08); }
 .filter-btn.d3.active { border-color: var(--danger3t); color: var(--danger3t); background: rgba(239,83,80,0.08); }
 
-  /*
 .session-toggle {
   background: rgba(255,77,106,0.1);
   border: 1px solid var(--accent2);
@@ -128,7 +127,6 @@ header {
   white-space: nowrap;
 }
 .session-toggle:hover { background: rgba(255,77,106,0.2); }
-*/
 
 /* LAYOUT */
 .layout {
@@ -138,7 +136,6 @@ header {
 }
 
 /* SIDEBAR SESSION */
-/*
 .sidebar {
   width: 260px;
   flex-shrink: 0;
@@ -271,7 +268,6 @@ header {
   transition: all 0.15s;
 }
 .reset-btn:hover { background: rgba(255,77,106,0.2); }
-*/
 
 /* MAIN */
 main {
@@ -485,7 +481,6 @@ main {
 }
 
 /* ADD TO SESSION */
-/*
 .card-footer {
   padding: 0 14px 12px;
 }
@@ -506,7 +501,7 @@ main {
 .add-session-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,229,160,0.05); }
 .add-session-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(0,229,160,0.1); }
 .add-session-btn.active:hover { border-color: var(--accent2); color: var(--accent2); background: rgba(255,77,106,0.1); }
-*/
+
 .no-results {
   color: var(--text3);
   font-size: 13px;
@@ -1152,9 +1147,9 @@ function renderCard(m) {
 /* =====================================================================
    INIT
    ===================================================================== */
-/* let sessionIds = JSON.parse(localStorage.getItem("repo_session")||"[]"); */
+let sessionIds = JSON.parse(localStorage.getItem("repo_session")||"[]");
 let activeFilter = "all";
-/* let sidebarOpen = true; */
+let sidebarOpen = true;
 
 function buildSections() {
   const container = document.getElementById("sections-container");
@@ -1197,8 +1192,7 @@ function applyFilters() {
 /* =====================================================================
    SESSION
    ===================================================================== */
-/*
-  function saveSession() {
+function saveSession() {
   localStorage.setItem("repo_session", JSON.stringify(sessionIds));
 }
 
@@ -1297,7 +1291,7 @@ function rebuildSidebar() {
     })(items[s]);
   }
 }
-*/
+
 function stripTags(html) {
   return html.replace(/<[^>]*>/g, "");
 }
@@ -1323,7 +1317,6 @@ document.getElementById("sessionToggle").addEventListener("click", function() {
   sidebarOpen = !sidebarOpen;
   document.getElementById("sidebar").classList.toggle("collapsed", !sidebarOpen);
 });
-  /*
 document.getElementById("resetBtn").addEventListener("click", function() {
   if (confirm("Réinitialiser la session ? Tous les monstres seront retirés.")) {
     sessionIds = [];
@@ -1332,7 +1325,6 @@ document.getElementById("resetBtn").addEventListener("click", function() {
     rebuildSidebar();
   }
 });
-*/
 
 /* =====================================================================
    BOOT
@@ -1350,9 +1342,7 @@ MONSTERS.forEach(function(m) {
 });
 
 syncCards();
-/*
 rebuildSidebar();
-*/
 </script>
 </body>
 </html>
